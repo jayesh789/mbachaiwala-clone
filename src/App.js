@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import IntroVideo from "./components/IntroVideo";
 import Section from "./components/Section";
-import data from "./data/data.json";
-import Footer from "./components/Footer";
 import Misc from "./components/Misc";
+import Footer from "./components/Footer";
+import Loader from "./components/Loader";
+import data from "./data/data.json";
 
 import freshTopicImg from "./assets/academy.png";
 import freshTopic2Img from "./assets/story.png";
@@ -20,14 +22,6 @@ import "./styles/section.scss";
 import "./styles/footer.scss";
 import "./styles/misc.scss";
 import "./styles/mediaQuery.scss";
-import { useEffect } from "react";
-
-
-// $yellow: #fff100;
-// $pink: #ed1e79;
-// $red: #d20120;
-// $white: #fff;
-// $brown: #6d3d0f;
 
 const yellow = "#fff100",
   pink = "#ed1e79",
@@ -35,7 +29,6 @@ const yellow = "#fff100",
   brown = "#6d3d0f";
 
 function App() {
-
   const {
     freshTopic,
     freshTopic2,
@@ -48,37 +41,42 @@ function App() {
     chaiwala,
   } = data;
 
-const dotCursor = (e) => {
-  const cursor = document.querySelector(".cursor");
-  cursor.style.top=`${e.pageY-14}px`;
-  cursor.style.left=`${e.pageX-14}px`;
+  const [loading, setLoading] = useState(true);
 
-  const element = e.target;
+  const dotCursor = (e) => {
+    const cursor = document.querySelector(".cursor");
+    cursor.style.top = `${e.pageY - 14}px`;
+    cursor.style.left = `${e.pageX - 14}px`;
 
-  if(element.getAttribute("data-cursorpointer")){
-    cursor.classList.add("cursorHover");
-  }
-  else if(element.getAttribute("data-cursorpointermini")){
-    cursor.classList.add("cursorHoverMini");
-  }
-  else{
-    cursor.classList.remove("cursorHover");
-    cursor.classList.remove("cursorHoverMini");
-  }
-}
+    const element = e.target;
+
+    if (element.getAttribute("data-cursorpointer")) {
+      cursor.classList.add("cursorHover");
+    } else if (element.getAttribute("data-cursorpointermini")) {
+      cursor.classList.add("cursorHoverMini");
+    } else {
+      cursor.classList.remove("cursorHover");
+      cursor.classList.remove("cursorHoverMini");
+    }
+  };
 
   useEffect(() => {
-    window.addEventListener("mousemove",dotCursor)
-    return () => {
-      window.addEventListener("mousemove",dotCursor)
-    }
-  }, [])
+    window.addEventListener("mousemove", dotCursor);
 
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => {
+      window.removeEventListener("mousemove", dotCursor);
+    };
+  }, []);
 
   return (
-    <div>
+    <>
+      {loading && <Loader />}
       <IntroVideo />
-      {/* freshTopic */}
+      {/* FreshTopic */}
       <Section
         h3={freshTopic.heading}
         text={freshTopic.text}
@@ -90,7 +88,7 @@ const dotCursor = (e) => {
         btnBgColor={yellow}
         btnColor={pink}
       />{" "}
-      {/* freshTopic2 */}
+      {/* FreshTopic - 2 */}
       <Section
         h3={freshTopic2.heading}
         text={freshTopic2.text}
@@ -101,8 +99,8 @@ const dotCursor = (e) => {
         textColor={yellow}
         btnBgColor={yellow}
         btnColor={pink}
-      />{" "}
-      {/* tedTalks */}
+      />
+      {/* Ted Talks */}
       <Section
         h3={tedTalks.heading}
         text={tedTalks.text}
@@ -113,7 +111,7 @@ const dotCursor = (e) => {
         textColor={pink}
         btnBgColor={pink}
         btnColor={yellow}
-      />{" "}
+      />
       {/* Franchise */}
       <Section
         h3={franchise.heading}
@@ -189,7 +187,7 @@ const dotCursor = (e) => {
       />
       <Footer />
       <Misc />
-    </div>
+    </>
   );
 }
 
